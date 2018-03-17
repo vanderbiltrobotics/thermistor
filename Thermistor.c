@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <roboticscape.h>
+//#include <covariance-tracker/covariance-tracker.h>
+//#include <vector>
 
 
 // R1 = values of the three other resisitors in the Wheatstone Bridge
@@ -27,6 +29,10 @@ int main(void) {
 	
 	//double vtotal;
 	//double t_avg = 0;  //get an average over the cycles
+	
+	//CovarianceTracker<double, 1> temp_cov(100);
+	//std::Vector<double> vec;
+	//count = 0;
 
 	while(cycles) {
 		vref = rc_adc_volt(0);
@@ -49,11 +55,17 @@ int main(void) {
 		temp_approx = 1.0 / (A1 + b_term + c_term + d_term) - 273.15;
 		printf("The calculated temp is %f.\n\n", temp_approx);
 		//t_avg += temp_approx;
+		
+		//vec[count] = temp_approx;
+		//count++;
+		
+		//temp_cov.addData(temp_approx);
 		usleep(500*1000);
 
 		--cycles;
 	}
 	//t_avg = t_avg / 200.0; //replace denominator w/ number of cycles. Again, just for direct connect testing.
+	//temp_cov.addData(temp_approx);
 
 	return 0;
 }
