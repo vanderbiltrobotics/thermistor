@@ -22,10 +22,11 @@ int main(void) {
 
 	rc_initialize();
 
-	int cycles = 200;
+	int cycles = 200; //used only for the purpose of testing the code while connected directly to the BeagleBone
 	double vref, v2, denom, numer, rx, log_term, b_term, c_term, d_term, temp_approx;
 	
 	//double vtotal;
+	//double t_avg = 0;  //get an average over the cycles
 
 	while(cycles) {
 		vref = rc_adc_volt(0);
@@ -47,10 +48,12 @@ int main(void) {
 		// temp_approx is the approximate temperature in degrees Celsius
 		temp_approx = 1.0 / (A1 + b_term + c_term + d_term) - 273.15;
 		printf("The calculated temp is %f.\n\n", temp_approx);
+		//t_avg += temp_approx;
 		usleep(500*1000);
 
 		--cycles;
 	}
+	//t_avg = t_avg / 200.0; //replace denominator w/ number of cycles. Again, just for direct connect testing.
 
 	return 0;
 }
