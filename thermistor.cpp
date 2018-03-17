@@ -2,9 +2,12 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <math.h>
-#include <roboticscape.h>
-//#include <covariance-tracker/covariance-tracker.h>
-//#include <vector>
+extern "C" {
+  #include <roboticscape.h>
+  #include <rc_usefulincludes.h>
+}
+#include <covariance-tracker/covariance-tracker.h>
+#include <vector>
 
 
 // R1 = values of the three other resisitors in the Wheatstone Bridge
@@ -30,9 +33,9 @@ int main(void) {
 	//double vtotal;
 	//double t_avg = 0;  //get an average over the cycles
 	
-	//CovarianceTracker<double, 1> temp_cov(100);
-	//std::Vector<double> vec;
-	//count = 0;
+	CovarianceTracker<double, 1> temp_cov(100);
+	std::vector<double> vec;
+	count = 0;
 
 	while(cycles) {
 		vref = rc_adc_volt(0);
@@ -59,7 +62,7 @@ int main(void) {
 		//vec[count] = temp_approx;
 		//count++;
 		
-		//temp_cov.addData(temp_approx);
+		temp_cov.addData({temp_approx});
 		usleep(500*1000);
 
 		--cycles;
