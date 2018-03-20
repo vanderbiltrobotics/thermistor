@@ -2,14 +2,14 @@
 # Just change the target name to match your main source code filename.
 TARGET = thermistor
 
-CC		:= gcc
-LINKER		:= gcc -o
+CC		:= g++ -std=c++11
+LINKER		:= g++ -o
 CFLAGS		:= -c -Wall -g
 LFLAGS		:= -lm -lrt -lpthread -lroboticscape
 
-SOURCES		:= $(wildcard *.c)
+SOURCES		:= $(wildcard *.cpp)
 INCLUDES	:= $(wildcard *.h)
-OBJECTS		:= $(SOURCES:$%.c=$%.o)
+OBJECTS		:= $(SOURCES:$%.cpp=$%.o)
 
 prefix		:= /usr/local
 RM		:= rm -f
@@ -27,7 +27,7 @@ $(TARGET): $(OBJECTS)
 
 
 # compiling command
-$(OBJECTS): %.o : %.c $(INCLUDES)
+$(OBJECTS): %.o : %.cpp $(INCLUDES)
 	@$(CC) $(CFLAGS) -c $< -o $(@)
 	@echo "Compiled: "$<
 

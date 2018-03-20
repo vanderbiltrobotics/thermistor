@@ -28,20 +28,20 @@ int main(void) {
 	rc_initialize();
 
 	int cycles = 200; //used only for the purpose of testing the code while connected directly to the BeagleBone
-	double vref, v2, denom, numer, rx, log_term, b_term, c_term, d_term, temp_approx;
+	double vref, denom, numer, rx, log_term, b_term, c_term, d_term, temp_approx;
 	
 	//double vtotal;
 	//double t_avg = 0;  //get an average over the cycles
 	
 	CovarianceTracker<double, 1> temp_cov(100);
 	std::vector<double> vec;
-	count = 0;
+	//count = 0;
 
 	while(cycles) {
 		vref = rc_adc_volt(0);
 		//vtotal = rc_adc_volt(2);
 		//printf("Total voltage is %f \n", vtotal);
-		v2   = rc_adc_volt(1);
+		//v2   = rc_adc_volt(1);
 		numer = vref * RREF;
 		denom = 1.794 - vref;		
 		rx = numer/denom;
@@ -62,7 +62,8 @@ int main(void) {
 		//vec[count] = temp_approx;
 		//count++;
 		
-		temp_cov.addData({temp_approx});
+		double ta_arr[] = {temp_approx};
+		temp_cov.addData(ta_arr);
 		usleep(500*1000);
 
 		--cycles;
