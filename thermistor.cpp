@@ -29,13 +29,14 @@ int main(void) {
 
 	int cycles = 200; //used only for the purpose of testing the code while connected directly to the BeagleBone
 	double vref, denom, numer, rx, log_term, b_term, c_term, d_term, temp_approx;
-	
+
+
 	//double vtotal;
 	//double t_avg = 0;  //get an average over the cycles
-	
-	CovarianceTracker<double, 1> temp_cov(100);
+	double intermediateAvg = 0;
+	//double count = (double) cycles;
+	CovarianceTracker<double, 1> temp_cov(cycles);
 	std::vector<double> vec;
-	//count = 0;
 
 	while(cycles) {
 		vref = rc_adc_volt(0);
@@ -43,7 +44,7 @@ int main(void) {
 		//printf("Total voltage is %f \n", vtotal);
 		//v2   = rc_adc_volt(1);
 		numer = vref * RREF;
-		denom = 1.794 - vref;		
+		denom = 1.794 - vref;
 		rx = numer/denom;
 
 		printf("The voltage at the ref is %f.\n", vref);
@@ -58,18 +59,31 @@ int main(void) {
 		temp_approx = 1.0 / (A1 + b_term + c_term + d_term) - 273.15;
 		printf("The calculated temp is %f.\n\n", temp_approx);
 		//t_avg += temp_approx;
-		
-		//vec[count] = temp_approx;
-		//count++;
-		
+		//intermediateAvg += temp_approx;
+
 		double ta_arr[] = {temp_approx};
 		temp_cov.addData(ta_arr);
 		usleep(500*1000);
 
+		if(cycles%10 == 0) {
+			Eigen::Matrix<double, 1, 1> intMean = temp_cov.getMean();
+			intermediateAvg = intMean(0,0);
+			printf("---------------------------\n");
+			printf("Avg of last 10 points: %f\n", intermediateAvg);
+			printf("---------------------------\n\n");
+			intermediateAvg = 0;
+		}
 		--cycles;
 	}
-	//t_avg = t_avg / 200.0; //replace denominator w/ number of cycles. Again, just for direct connect testing.
-	//temp_cov.addData(temp_approx);
+	//t_avg = t_avg/count;
+	Eigen::Matrix<double, 1, 1> cov = temp_cov.getCovariance();
+	double var = cov(0,0);
+	Eigen::Matrix<double, 1, 1> mean = temp_cov.getMean();
+	double t_avg = mean(0,0);
+	printf("--------------------------\n");
+	printf("Overall mean: %f\n", t_avg);
+	printf("Covariance! %f\n", var);
+	printf("--------------------------\n");
 
 	return 0;
 }
